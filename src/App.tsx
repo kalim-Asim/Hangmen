@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Key } from "./components/Key";
 import Words from "./Words.json"
 import { Hangmen } from "./components/Hangmen";
-// const Words = ["PUSH", "ASS"];
+
 function App() {
   const initializeGame = () => {
     const str = Words[Math.floor(Math.random() * Words.length)];
@@ -12,7 +12,7 @@ function App() {
       word: str.split(""),
       hiddenInputs: Array(str.length).fill(true),
       disabledKeys: Array(26).fill(false),
-      tries: 0,
+      tries: 6,
       rem: str.length
     };
   };
@@ -32,10 +32,10 @@ function App() {
         newHiddenInputs[wordIndex] = false;
         newRem--;
       } else {
-        newTries++;
+        newTries--;
       }
 
-      if (newTries === 26) {
+      if (newTries === 0) {
         setTimeout(() => {
           alert("YOU LOST !!");
           refresh();
@@ -104,7 +104,7 @@ function App() {
       </div>
 
       <div className="w-[35%] flex justify-center items-center relative">
-          <Hangmen />
+          <Hangmen numberOfGuesses={6 - gameState.tries}/>
       </div>
 
 
