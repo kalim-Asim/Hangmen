@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Key } from "./components/Key";
-
-const Words = ["PUSH", "SIT", "TABLE", "TO"];
-
+import Words from "./Words.json"
+import { Hangmen } from "./components/Hangmen";
+// const Words = ["PUSH", "ASS"];
 function App() {
   const initializeGame = () => {
     const str = Words[Math.floor(Math.random() * Words.length)];
+
+    console.log(str);
     return {
       word: str.split(""),
       hiddenInputs: Array(str.length).fill(true),
@@ -15,7 +17,7 @@ function App() {
     };
   };
 
-  const [gameState, setGameState] = useState(initializeGame());
+  const [gameState, setGameState] = useState(() => initializeGame());
 
   const handleKeyPress = (letter: string) => {
     const index = letter.charCodeAt(0) - 65;
@@ -33,7 +35,7 @@ function App() {
         newTries++;
       }
 
-      if (newTries === 5) {
+      if (newTries === 26) {
         setTimeout(() => {
           alert("YOU LOST !!");
           refresh();
@@ -62,42 +64,50 @@ function App() {
   };
 
   return (
-    <div className="min-w-[320px] min-h-[600px] flex flex-col justify-center items-center h-screen bg-black p-4">
+    <div className="min-w-[320px] min-h-[600px] flex h-screen bg-black p-4">
 
-      <div className="flex gap-10 mb-32">
-        {gameState.word.map((val, i) => (
-          <input
-            key={i}
-            type={gameState.hiddenInputs[i] ? "password" : "text"}
-            value={val}
-            className="w-32 h-32 text-9xl text-center border-b-4 border-gray-500 rounded-lg bg-black text-white outline-none"
-            maxLength={1}
-            readOnly
-          />
-        ))}
-      </div>
-
-      <div className="grid grid-cols-10 gap-2">
-        {Array.from({ length: 26 }, (_, i) => {
-          const letter = String.fromCharCode(65 + i);
-          return (
-            <Key
+      <div className="flex flex-col justify-center items-center w-[65%]">
+        <div className="flex gap-10 mb-32">
+          {gameState.word.map((val, i) => (
+            <input
               key={i}
-              value={letter}
-              disable={gameState.disabledKeys[i]}
-              onClick={() => handleKeyPress(letter)}
+              type={gameState.hiddenInputs[i] ? "password" : "text"}
+              value={val}
+              className="w-20 h-20 text-7xl text-center border-b-4 border-gray-500 rounded-lg bg-black text-white outline-none"
+              maxLength={1}
+              readOnly
             />
-          );
-        })}
+          ))}
+        </div>
+
+        <div className="grid grid-cols-10 gap-2">
+          {Array.from({ length: 26 }, (_, i) => {
+            const letter = String.fromCharCode(65 + i);
+            return (
+              <Key
+                key={i}
+                value={letter}
+                disable={gameState.disabledKeys[i]}
+                onClick={() => handleKeyPress(letter)}
+              />
+            );
+          })}
+        </div>
+
+        {/* Restart Button */}
+        <button
+          className="mt-8 px-4 py-2 bg-red-500 text-white rounded-lg cursor-pointer"
+          onClick={refresh}
+        >
+          Restart
+        </button>
       </div>
 
-      
-      <button
-        className="mt-8 px-4 py-2 bg-red-500 text-white rounded-lg cursor-pointer"
-        onClick={refresh}
-      >
-        Restart
-      </button>
+      <div className="w-[35%] flex justify-center items-center relative">
+          <Hangmen />
+      </div>
+
+
     </div>
   );
 }
